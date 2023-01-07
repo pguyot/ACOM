@@ -28,6 +28,7 @@ jobs:
         cpu: cortex-a7
         base_image: raspios_lite:latest
         cpu_info: cpuinfo/raspberrypi_3b
+        use_systemd_nspawn: true
         commands: |
           sudo apt-get -y install build-essential
           sudo apt -y install raspberrypi-kernel raspberrypi-kernel-headers
