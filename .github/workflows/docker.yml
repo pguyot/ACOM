@@ -1,0 +1,42 @@
+name: Docker Image CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-x64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build Docker image
+      run: make docker
+    - name: Run tests
+      run: make ci-test
+    - name: Publish Docker image
+      if: ${{ github.event_name == 'push' }}
+      run: |
+        docker login -u "$DOCKER_HUB_USER" -p "$DOCKER_HUB_PASSWORD"
+        docker-publish-arm
+  
+  build-arm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: pguyot/arm-runner-action@v2
+      with:
+        image_additional_mb: 2048
+        cpu: cortex-a7
+        base_image: raspios_lite:latest
+        cpu_info: cpuinfo/raspberrypi_3b
+        commands: |
+          sudo apt-get -y install build-essential
+          sudo apt -y install raspberrypi-kernel raspberrypi-kernel-headers
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          sudo make docker-arm
+          sudo make ci-test
+    - name: Publish Docker image
+      if: ${{ github.event_name == 'push' }}
+      run: |
+        docker login -u "$DOCKER_HUB_USER" -p "$DOCKER_HUB_PASSWORD"
+        docker-publish-arm
