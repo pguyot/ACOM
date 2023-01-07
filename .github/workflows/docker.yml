@@ -33,6 +33,7 @@ jobs:
           sudo apt -y install raspberrypi-kernel raspberrypi-kernel-headers
           curl -fsSL https://get.docker.com -o get-docker.sh
           sudo sh get-docker.sh
+          sudo systemctl enable --now docker
           sudo make docker-arm
           sudo make ci-test
     - name: Publish Docker image
