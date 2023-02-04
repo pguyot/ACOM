@@ -27,7 +27,6 @@ jobs:
         image_additional_mb: 2048
         cpu: cortex-a7
         base_image: raspios_lite:latest
-        cpu_info: cpuinfo/raspberrypi_3b
         use_systemd_nspawn: true
         commands: |
           sudo apt-get -y install build-essential
